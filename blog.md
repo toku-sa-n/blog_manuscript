@@ -293,21 +293,20 @@ JE finish_select_mode
 ```
 
 ##### モードナンバに対応するビデオモードの情報取得
-[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
+[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage30より引用．
 
->**FUNCTION: Get VESA mode information**
+>**Function 01h - Return VBE Mode Information**
 >
->Function code: 0x4F01
+>**Input:**
+>AX = 0x4F01 Return VBE Mode Information
 >
->Description: This function returns the mode information structure for a specified mode. The mode number should be gotten from the supported modes array.
+>CX = Mode number
 >
->**Input**: AX = 0x4F01
+>ES:DI = Pointer to ModeInfoBlock structure
 >
->**Input**: CX = VESA mode number from the video modes array
+>**Output**: AX = VBE Return Status
 >
->**Input**: ES:DI = Segment:Offset pointer of where to store the VESA Mode Information Structure shown below.
->
->**Output**: AX = 0x004F on success, other values indicate a BIOS error or a mode-not-supported error.
+>**Note:** All other registers are preserved.
 
 この関数を利用して，ビデオモードの情報を得る．
 ```asm
