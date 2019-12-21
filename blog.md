@@ -26,6 +26,11 @@ VBEのバージョンが2.0未満の時代は，予めVESAが定義したモー�
 
 ### asmhead.nasの書き換え
 書き換えたものはこちらになります．
+
+<div onclick="obj=document.getElementById('full_asm_code').style; obj.display=(obj.display=='none')?'block':'none';">
+<a style="cursor:pointer;">クリックで表示</a>
+</div>
+<div id="full_asm_code" style="display:none;clear:both;">
 ```asm
 ; BOOT_INFO関係
 CYLS    EQU     0x0ff0          ; ブートセクタが設定する
@@ -169,6 +174,7 @@ screen_320:
 
 keystatus:
 ```
+</div>
 
 #### 定数定義の追加と名称変更
 使用するVBEのモードナンバがどこに格納されているかと，VBEの情報の大きさに関する定義を追加します．
