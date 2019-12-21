@@ -460,7 +460,7 @@ JB next_mode
 ```
 
 ##### 候補の更新
-見事，今までの選考基準を通過したVBEモードが登場した場合，解像度や色数に関する情報を更新する．
+見事，今までの選考基準を通過したVBEモードが登場した場合，解像度や色数に関する情報を更新します．
 
 ```asm
 MOV AX,WORD[ES:DI+18]
@@ -481,7 +481,7 @@ MOV WORD[VBEMODE],CX
 ```
 
 #### 次のループへの処理
-モードナンバの配列のポインタを更新し，ループの先頭へ飛ぶ．
+モードナンバの配列のポインタを更新し，ループの先頭へ飛びます．
 ```asm
 MOV AX,WORD[ES:VMODE_PTR]
 ADD AX,2
@@ -491,13 +491,13 @@ JMP select_mode
 ```
 
 #### ループ終了後の処理
-まずラベルを追加する．
+まずラベルを追加します．
 ```asm
 finish_select_mode:
 ```
 
 ##### 解像度と色数の確認
-解像度や色数が初期値のままの場合，使用可能なVBEモードが存在しないので320x200を使用する．
+解像度や色数が初期値のままの場合，使用可能なVBEモードが存在しないので320x200を使用します．
 ```asm
 CMP WORD[SCRNX],320
 JNE set_vbe_mode
@@ -512,12 +512,12 @@ JMP screen_320
 ```
 
 ##### VBEモードの設定
-まずラベルを貼る．
+まずラベルを貼ります．
 ```asm
 set_vbe_mode:
 ```
 
-VBEモードを登録する．[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
+VBEモードを登録します．[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
 >**FUNCTION: Set VBE mode**
 >
 >Function code: 0x4F02
