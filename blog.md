@@ -224,7 +224,7 @@ BPP EQU 0x0ff2
 |Reserved|db|222 dub?|Reserved for VBE implementation scratch area|
 |OemData|db|256dub?|Data Area for OEM Strings|
 
-ところで，この関数は本中ののP278でも使用されてます．そこではVBEの存在確認としてその関数を呼び出してまずが，以下のコードはそれに若干可変を加えたものです．具体的には，`VBE`に`0x9000`を対応付け，それを`ES`レジスタに代入して利用しています．
+ところで，この関数は本中のP278でも使用されてます．そこではVBEの存在確認としてこの関数を呼び出してまずが，以下のコードはそれに若干改変を加えたものです．具体的には，`VBE`に`0x9000`を対応付け，それを`ES`レジスタに代入して利用しています．
 ```asm
 VBE EQU 0x9000
 
