@@ -190,37 +190,39 @@ VBE_INFO_SIZE EQU 512
 BPP EQU 0x0ff2
 ```
 ### 利用可能な画面モードの取得
-[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
+[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage25より引用．
 
->**FUNCTION: Get VESA BIOS information **
->Function code: 0x4F00
+>**Function 00h - Return VBE Controller Information**
 >
->Description: Returns the VESA BIOS information, including manufacturer, supported modes, available video memory, etc... **Input**: AX = 0x4F00
+>**Input**:
 >
->**Input**: ES:DI = Segment:Offset pointer to where to store VESA BIOS information structure.
+>AX      = 4F00h     Return VBE Controller Information
 >
->**Output**: AX = 0x004F on success, other values indicate that VESA BIOS is not supported.
+>ES:DI   =           Pointer to buffer in which to place VbeInfoBlock structure (VbeSignature should be set to 'VBE2' when function is called to indicate VBE 3.0 information is desired and the information block is 512 bytes in size.)
+>
+>**Output**:    AX      =           VBE Return Status
+>
+>
+>**Note**: All other registers are preserved.
 
 この関数を使うことで，利用可能なビデオモードなどが格納されている情報を取得することができます．
 
-情報の構成は，次の構造体のような構成になっています．[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
+情報の構成は，次の構造体のような構成になっています．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)Page25に記載されているものを表にしました．
 
-```c
-struct vbe_info_structure {
-	char[4] signature = "VESA";	// must be "VESA" to indicate valid VBE support
-	uint16 version;			// VBE version; high byte is major version, low byte is minor version
-	uint32 oem;			// segment:offset pointer to OEM
-	uint32 capabilities;		// bitfield that describes card capabilities
-	uint32 video_modes;		// segment:offset pointer to list of supported video modes
-	uint16 video_memory;		// amount of video memory in 64KB blocks
-	uint16 software_rev;		// software revision
-	uint32 vendor;			// segment:offset to card vendor string
-	uint32 product_name;		// segment:offset to card model name
-	uint32 product_rev;		// segment:offset pointer to product revision
-	char reserved[222];		// reserved for future expansion
-	char oem_data[256];		// OEM BIOSes store their strings in this area
-} __attribute__ ((packed));
-```
+|名前|大きさ|格納されているデータなど|説明|
+|----|------|------------------------|----|
+|VbeSignature|db((バイト))|'VESA'|VBE Signature|
+|VbeVersioin|dw((ワード))|0300h|VBE Version|
+|OemStringPtr|dd((ダブルワード))||VbeFarPtr to OEM String|
+|Capabilities|db|4 dup?((4つの要素が存在する))|Capabilities of graphics controller|
+|VideoModePtr|dd||VbeFarPtr to VideoModeList|
+|TotalMemory|dw||Number of 64kb memory blocks. Added for VBE 2.0+|
+|OemSoftwareRev|dw||VBE implementation Software revision|
+|OemVendorNamePtr|dd||VbeFarPtr to Vendor Name String|
+|OemProductNamePtr|dd||VbeFarPtr to Product Name String|
+|OemProductRevPtr|dd||VbeFarPtr to Product Revision String|
+|Reserved|db|222 dub?|Reserved for VBE implementation scratch area|
+|OemData|db|256dub?|Data Area for OEM Strings|
 
 ところで，この関数は本中ののP278でも使用されてます．そこではVBEの存在確認としてその関数を呼び出してまずが，以下のコードはそれに若干可変を加えたものです．具体的には，`VBE`に`0x9000`を対応付け，それを`ES`レジスタに代入して利用しています．
 ```asm
