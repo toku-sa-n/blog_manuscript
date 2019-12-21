@@ -323,46 +323,76 @@ JNE next_mode
 
 つまり，例えば使用できるメモリの大きさが，ビデオRAMの大きさよりも小さい場合などが該当するようです．
 
-ビデオモードの情報は，以下の構造体のような構成となっています．[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
-```c
-struct vbe_mode_info_structure {
-	uint16 attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
-	uint8 window_a;			// deprecated
-	uint8 window_b;			// deprecated
-	uint16 granularity;		// deprecated; used while calculating bank numbers
-	uint16 window_size;
-	uint16 segment_a;
-	uint16 segment_b;
-	uint32 win_func_ptr;		// deprecated; used to switch banks from protected mode without returning to real mode
-	uint16 pitch;			// number of bytes per horizontal line
-	uint16 width;			// width in pixels
-	uint16 height;			// height in pixels
-	uint8 w_char;			// unused...
-	uint8 y_char;			// ...
-	uint8 planes;
-	uint8 bpp;			// bits per pixel in this mode
-	uint8 banks;			// deprecated; total number of banks in this mode
-	uint8 memory_model;
-	uint8 bank_size;		// deprecated; size of a bank, almost always 64 KB but may be 16 KB...
-	uint8 image_pages;
-	uint8 reserved0;
+ビデオモードの情報は，以下の構造体のような構成となっています．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage30の説明を表にしました．
 
-	uint8 red_mask;
-	uint8 red_position;
-	uint8 green_mask;
-	uint8 green_position;
-	uint8 blue_mask;
-	uint8 blue_position;
-	uint8 reserved_mask;
-	uint8 reserved_position;
-	uint8 direct_color_attributes;
+##### すべてのバージョンのVBEで格納されている情報
+|名前|大きさ|格納されているデータなど|説明|
+|----|------|------------------------|----|
+|ModeAttributes|dw||mode attributes|
+|WinAAttributes|db||window A attributes|
+|WinBAttributes|db||window B attributes|
+|WinGranularity|dw||window granularity|
+|WinSize|dw||window size|
+|WinASegment|dw||window A start segment|
+|WinBSegment|dw||window B start segment|
+|WinFuncPtr|dd||real mode pointer to window function|
+|BytesPerScanLine|dw||bytes per scan line|
 
-	uint32 framebuffer;		// physical address of the linear frame buffer; write here to draw to the screen
-	uint32 off_screen_mem_off;
-	uint16 off_screen_mem_size;	// size of memory in the framebuffer but not being displayed on the screen
-	uint8 reserved1[206];
-} __attribute__ ((packed));
-```
+##### バージョン1.2以降のVBEで格納されている情報
+|名前|大きさ|格納されているデータなど|説明|
+|----|------|------------------------|----|
+|XResolution|dw||horizontal resolution in pixels of characters|
+|YResolution|dw||vertical resolution in pixels of characters|
+|XCharSize|db||character cell width in pixels|
+|YCharSize|db||character cell height in pixels|
+|NumberOfPlanes|db||number of memory planes|
+|BitsPerPixel|db||bits per pixel|
+|NumberOfBanks|db||number of banks|
+|MemoryModel|db||memory model type|
+|BankSize|db||bank size in KB|
+|NumberOfImagePages|db||number of images|
+|Reserved|db|1|reserved for page function|
+
+##### ダイレクトカラー情報
+|名前|大きさ|格納されているデータなど|説明|
+|----|------|------------------------|----|
+|RedMaskSize|db||size of direct color red mask in bits|
+|RedFieldPosition|db||bit position of lsb of red mask|
+|GreenMaskSize|db||size of direct color green mask in bits|
+|GreenFieldPosition|db||bit position of lsb of green mask|
+|BlueMaskSize|db||size of direct color blue mask in bits|
+|BlueFieldPosition|db||bit position of lsb of blue mask|
+|RsvdMaskSize|db||size of direct color reserved mask in bits|
+|RsvdFieldPosition|db||bit position of lsb of reserved mask|
+|DirectColorModeInfo|db||direct color mode attributes|
+
+##### バージョン2.0以降のVBEで格納されている情報
+|名前|大きさ|格納されているデータなど|説明|
+|----|------|------------------------|----|
+|PhysBasePtr|dd||physical address for flat memory frame buffer|
+|Reserved|dd|0|Reserved - always set to 0|
+|Reserved|dw|0|Reserved - always set to 0|
+
+##### バージョン3.0以降のVBEで格納されている情報
+|名前|大きさ|格納されているデータなど|説明|
+|----|------|------------------------|----|
+|LinBytesPerScanLine|dw||bytes per scan line for linear modes|
+|BnkNumberOfImagePages|db||number of images for banked modes|
+|LinNumberOfImagePages|db||number of images for linear modes|
+|LinRedMaskSize|db||size of direct color red mask (linear modes)|
+|LinRedFieldPosition|db||bit position of lsb of red mask (linear modes)|
+|LinGreenMaskSize|db||size of direct color green mask (linear modes)|
+|LinGreenFieldPosition|db||bit position of lsb of green mask (linear modes)|
+|LinBlueMaskSize|db||size of direct color blue mask (linear modes)|
+|LinBlueFieldPosition|db||bit position of lsb of blue mask (linear modes)|
+|LinRsvdMaskSize|db||size of direct color reserved mask (linear modes)|
+|LinRsvdFieldPosition|db||bit position of lsb of reserved mask (linear modes)|
+|MaxPixelClook|dd||maximum pixel clock (in Hz) for graphics mode|
+
+##### その他
+|名前|大きさ|格納されているデータなど|説明|
+|----|------|------------------------|----|
+|Reserved|db|189dub?|remainder of ModeInfoBlock|
 
 ##### linear framebufferに対応しているかの確認
 linear framebufferに対応していると，ビデオRAMのすべてのメモリが一列に並ぶ．つまり，ディスプレイのどのピクセルもこのビデオRAMのどこかしらに対応している．linear framebufferに対応していない場合，複数のbankというものに区分けされ，時々bankを切り替える必要がある．
