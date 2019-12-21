@@ -395,9 +395,9 @@ JNE next_mode
 |Reserved|db|189dub?|remainder of ModeInfoBlock|
 
 ##### linear framebufferに対応しているかの確認
-linear framebufferに対応していると，ビデオRAMのすべてのメモリが一列に並ぶ．つまり，ディスプレイのどのピクセルもこのビデオRAMのどこかしらに対応している．linear framebufferに対応していない場合，複数のbankというものに区分けされ，時々bankを切り替える必要がある．
+linear framebufferに対応していると，ビデオRAMのすべてのメモリが一列に並びます．つまり，ディスプレイのどのピクセルもこのビデオRAMのどこかしらに対応しています．linear framebufferに対応していない場合，複数のbankというものに区分けされ，時々bankを切り替える必要があります．
 
-ビデオモードがlinear framebufferに対応しているかは，ビデオモードの情報の中の`attributes`の第7ビットが1になっているかで確認する．これが1ならlinear framebufferに対応している．
+ビデオモードがlinear framebufferに対応しているかは，ビデオモードの情報の中の`attributes`の第7ビットが1になっているかで確認します．これが1ならlinear framebufferに対応しています．
 
 ```asm
 MOV AX,WORD[ES:DI]
