@@ -277,14 +277,14 @@ VMODE_PTR EQU 14
 ```
 
 ##### モードナンバの取得
-モードナンバの配列からモードナンバを取得する．
+モードナンバの配列からモードナンバを取得します．
 ```asm
 MOV SI,WORD[ES:VMODE_PTR]
 MOV FS,WORD[ES:VMODE_PTR+2]
 MOV CX,WORD[FS:SI]
 ```
 
-そして，もしモードナンバの値が`0xFFFF`だった場合，モードナンバの選択を終わらせる．
+そして，もしモードナンバの値が`0xFFFF`だった場合，モードナンバの選択を終了します．
 ```asm
 CMP CX,0xFFFF
 JE finish_select_mode
