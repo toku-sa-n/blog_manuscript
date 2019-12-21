@@ -207,6 +207,8 @@ BPP EQU 0x0ff2
 
 この関数を使うことで，利用可能なビデオモードなどが格納されている情報を取得することができます．
 
+OutputのVBE Return Statusは，`0x004F`なら関数の実行の成功，それ以外なら失敗を表します．
+
 情報の構成は，次の構造体のような構成になっています．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)Page25に記載されているものを表にしました．
 
 |名前|大きさ|格納されているデータなど|説明|
