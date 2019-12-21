@@ -205,7 +205,7 @@ BPP EQU 0x0ff2
 >
 >**Note**: All other registers are preserved.
 
-この関数を使うことで，利用可能なビデオモードなどが格納されている情報を取得することができます．
+この関数を使うことで，利用可能なVBEモードなどが格納されている情報を取得することができます．
 
 OutputのVBE Return Statusは，`0x004F`なら関数の実行の成功，それ以外なら失敗を表します．
 
@@ -262,7 +262,7 @@ MOV WORD[SCRNY],200
 ```asm
 MOV DI,VBE_INFO_SIZE
 ```
-VBEの情報を取得したときと同様，モードナンバに対応するビデオモードの情報を取得すると，情報は`ES:DI`を始点として情報が格納されます．従って，VBEの情報を上書きしないために，VBEの情報の大きさの値を`DI`レジスタに格納しておきます．
+VBEの情報を取得したときと同様，モードナンバに対応するVBEモードの情報を取得すると，情報は`ES:DI`を始点として情報が格納されます．従って，VBEの情報を上書きしないために，VBEの情報の大きさの値を`DI`レジスタに格納しておきます．
 
 #### ループ本体
 
@@ -292,7 +292,7 @@ CMP CX,0xFFFF
 JE finish_select_mode
 ```
 
-##### モードナンバに対応するビデオモードの情報取得
+##### モードナンバに対応するVBEモードの情報取得
 [規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage30より引用．
 
 >**Function 01h - Return VBE Mode Information**
@@ -308,7 +308,7 @@ JE finish_select_mode
 >
 >**Note:** All other registers are preserved.
 
-この関数を利用して，ビデオモードの情報を取得します．
+この関数を利用して，VBEモードの情報を取得します．
 ```asm
 MOV AX,0x4F01
 INT 0x10
@@ -318,12 +318,12 @@ INT 0x10
 CMP AX,0x004F
 JNE next_mode
 ```
-ところで，モードナンバが配列の要素として格納されていながら，実際にその番号を使用してビデオモードの情報を得ようとして失敗する場合は存在するようです．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage27のNoteより引用．
+ところで，モードナンバが配列の要素として格納されていながら，実際にその番号を使用してVBEモードの情報を得ようとして失敗する場合は存在するようです．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage27のNoteより引用．
 >It is responsibility of the application to verify the actual availability of any mode returnedby this function through the Return VBE Mode Information (VBE Function 01h) call.Some of the returned modes may not be available due to the actual amount of memoryphysically installed on the display board or due to the capabilities of the attached monitor.
 
 つまり，例えば使用できるメモリの大きさが，ビデオRAMの大きさよりも小さい場合などが該当するようです．
 
-ビデオモードの情報は，以下の構造体のような構成となっています．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage30の説明を表にしました．
+VBEモードの情報は，以下の構造体のような構成となっています．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage30の説明を表にしました．
 
 ##### すべてのバージョンのVBEで格納されている情報
 |名前|大きさ|格納されているデータなど|説明|
@@ -397,7 +397,7 @@ JNE next_mode
 ##### linear framebufferに対応しているかの確認
 linear framebufferに対応していると，ビデオRAMのすべてのメモリが一列に並びます．つまり，ディスプレイのどのピクセルもこのビデオRAMのどこかしらに対応しています．linear framebufferに対応していない場合，複数のbankというものに区分けされ，時々bankを切り替える必要があります．
 
-ビデオモードがlinear framebufferに対応しているかは，ビデオモードの情報の中の`attributes`の第7ビットが1になっているかで確認します．これが1ならlinear framebufferに対応しています．
+VBEモードがlinear framebufferに対応しているかは，VBEモードの情報の中の`attributes`の第7ビットが1になっているかで確認します．これが1ならlinear framebufferに対応しています．
 
 ```asm
 MOV AX,WORD[ES:DI]
@@ -409,13 +409,13 @@ JNE next_mode
 ##### packed pixelかどうかの確認
 packed pixelというのは，各ピクセルとメモリをバイト単位で結びつけるのではなく，ビット単位で結びつける．例えば4ビットカラーならば，1ピクセルを1バイト中の4ビットと結びつけ，残りの4ビットを使用しないのではなく，1バイトを2ピクセルと対応付け，前半後半の4ビットをぞれぞれ1ピクセルと対応付ける．つまり隙間を作らないという意味で*packed*ということである．
 
-ビデオモードがpacked pixelかどうかは構造体の`memory_model`の値を確認する．
+VBEモードがpacked pixelかどうかは構造体の`memory_model`の値を確認する．
 ```asm
 MOV AX,WORD[ES:DI+27]
 CMP AX,4
 JE valid_mode
 ```
-27というのは，`memory_model`の構造体の先頭からの距離である．もしこの値が4ならば，使用するビデオモードの候補として有効なため，`valid_mode`ラベルに飛ばす．
+27というのは，`memory_model`の構造体の先頭からの距離である．もしこの値が4ならば，使用するVBEモードの候補として有効なため，`valid_mode`ラベルに飛ばす．
 
 ##### ダイレクトカラーかどうかの確認
 ```asm
@@ -447,7 +447,7 @@ CMP AX,WORD[SCRNY]
 JB next_mode
 ```
 
-もし横，縦がどちらかでも，それまでの候補のビデオモードよりも小さければ次の候補に回す．
+もし横，縦がどちらかでも，それまでの候補のVBEモードよりも小さければ次の候補に回す．
 
 ##### 色数の比較
 先程述べたように，24ビットカラーか32ビットカラー以外は選択肢から外する．色数は構造体のbppに格納され，先頭から25バイト離れている．
@@ -457,7 +457,7 @@ JB next_mode
 ```
 
 ##### 候補の更新
-見事今までの選考基準を通過したビデオモードが登場した場合，解像度や色数に関する情報を更新する．
+見事今までの選考基準を通過したVBEモードが登場した場合，解像度や色数に関する情報を更新する．
 
 ```asm
 MOV AX,WORD[ES:DI+18]
@@ -494,7 +494,7 @@ finish_select_mode:
 ```
 
 ##### 解像度と色数の確認
-解像度や色数が初期値のままの場合，使用可能なビデオモードが存在しないので320x200を使用する．
+解像度や色数が初期値のままの場合，使用可能なVBEモードが存在しないので320x200を使用する．
 ```asm
 CMP WORD[SCRNX],320
 JNE set_vbe_mode
