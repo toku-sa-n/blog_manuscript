@@ -308,22 +308,22 @@ JE finish_select_mode
 >
 >**Note:** All other registers are preserved.
 
-この関数を利用して，ビデオモードの情報を得る．
+この関数を利用して，ビデオモードの情報を取得します．
 ```asm
 MOV AX,0x4F01
 INT 0x10
 ```
-もし失敗した場合，次のモードを候補とする．
+もし失敗した場合，次のモードを候補とします．
 ```asm
 CMP AX,0x004F
 JNE next_mode
 ```
-ところで，モードナンバが配列の要素として格納されていながら，実際にその番号を使用してビデオモードの情報を得ようとして失敗する場合は存在するようである．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage27のNoteより引用．
+ところで，モードナンバが配列の要素として格納されていながら，実際にその番号を使用してビデオモードの情報を得ようとして失敗する場合は存在するようです．[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage27のNoteより引用．
 >It is responsibility of the application to verify the actual availability of any mode returnedby this function through the Return VBE Mode Information (VBE Function 01h) call.Some of the returned modes may not be available due to the actual amount of memoryphysically installed on the display board or due to the capabilities of the attached monitor.
 
-つまり，例えば使用できるメモリの大きさが，ビデオRAMの大きさよりも小さい場合などが該当するようである．
+つまり，例えば使用できるメモリの大きさが，ビデオRAMの大きさよりも小さい場合などが該当するようです．
 
-ビデオモードの情報は，以下の構造体のような構成となっている．[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
+ビデオモードの情報は，以下の構造体のような構成となっています．[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
 ```c
 struct vbe_mode_info_structure {
 	uint16 attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
