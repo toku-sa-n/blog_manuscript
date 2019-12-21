@@ -433,7 +433,7 @@ JMP next_mode
 ところで，packed pixelかどうか，そしてダイレクトカラーかどうかの確認については，[OSDev Wiki](https://wiki.osdev.org/VESA_Video_Modes)を参考にしました．
 
 ##### 解像度の比較
-packed pixelかダイレクトカラーだと確認できれば，次は解像度の比較を行います．そのためのラベルを貼ります．
+packed pixelかダイレクトカラーだと確認できれば，次は解像度の比較を行います．まずラベルを貼ります．
 ```asm
 valid_mode:
 ```
