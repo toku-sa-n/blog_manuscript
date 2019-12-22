@@ -662,6 +662,4 @@ xp /10xb 0x0ff2
 
 [https://wiki.osdev.org/Memory_Map_(x86):title]
 
-[https://qiita.com/MoriokaReimen/items/4853587dcb9eb96fab62:title]
-
 [http://niwatolli3.hatenablog.jp/entry/2015/06/01/201341:title]
