@@ -517,18 +517,36 @@ JMP screen_320
 set_vbe_mode:
 ```
 
-VBEモードを登録します．[https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial:title]より引用．
->**FUNCTION: Set VBE mode**
+VBEモードを登録します．以下の情報は[規格書](http://www.petesqbsite.com/sections/tutorials/tuts/vbe3.pdf)のPage40からです．
+>**Function 02h - Set VBE Mode**
 >
->Function code: 0x4F02
+>**Input:**
 >
->Description: This function sets a VBE mode.
+>AX = 4F02h Set VBE Mode
 >
->**Input:** AX = 0x4F02
+>BX = Desired Mode to set
 >
->**Input:** BX = Bits 0-13 mode number; bit 14 is the LFB bit: when set, it enables the linear framebuffer, when clear, software must use bank switching. Bit 15 is the DM bit: when set, the BIOS doesn't clear the screen. Bit 15 is usually ignored and should always be cleared.
+>ES:DI = Pointer to CRTCInfoBlock structure
 >
->**Output:** AX = 0x004F on success, other values indicate errors; such as BIOS error, too little video memory, unsupported VBE mode, mode doesn't support linear frame buffer, or any other error.
+>**Output:**
+>
+>AX = VBE Return Status
+>
+>**Note:** All other registers are preserved.
+
+`BX`レジスタの値は以下の表のとおりです．
+
+|第nビット|値|説明|
+|---------|--|----|
+|0-8||Mode number|
+|9-10||Reserved (must be 0) |
+|11|0|Use current default refresh rate|
+|11|1|Use user specified CRTC values for refresh rate|
+|12-13||Reserved for VBE/AF (must be 0) |
+|14|0|Use windowed frame buffer model|
+|14|1|Use linear/flat frame buffer model|
+|15|0|Clear display memory|
+|15|1|Don't clear display memory|
 
 この関数が失敗する場合もある．その場合，320x200を使用する．
 
