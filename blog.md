@@ -579,6 +579,49 @@ screen_320:
 ```asm
 MOV DWORD [VRAM],0xfd000000
 ```
+
+### Cファイルの書き換え
+
+#### 基本的なこと
+今まではビデオRAMの特定の番地に色の番号を格納していましたが，ダイレクトカラーを使用する時は番号ではなく構成要素の強さを格納します．今回使用する24ビットカラーや32ビットカラーでは赤，緑，青の色の強さを格納します．
+
+例として，本中のP94にある，`boxfill8`関数を改造します．元の関数は以下の通りです．
+```c
+void boxfill8(unsigned char *vram, int xsize, unsigned char c, int x0, int y0, int x1, int y1)
+{
+    int x, y;
+    for (y = y0; y <= y1; y++){
+        for (x = x0; x <= x1; x++)
+            vram[y * xsize + x] = c;
+    }
+    return;
+}
+```
+書き換え後は以下の通りです．
+```c
+void boxfill8(struct BootInfo* boot_info, unsigned c, int x0, int y0, int x1, int y1)
+{
+    int x, y;
+    int xsize = boot_info->scrnx;
+    char* vram = boot_info->vram;
+    char vmode = boot_info->vmode;
+
+    for (y = y0; y <= y1; y++) {
+        for (x = x0; x <= x1; x++) {
+            int idx = (y * xsize + x) * vmode / 8;
+            vram[idx] = (c & 0x0000ff);
+            vram[idx + 1] = (c & 0x00ff00) >> 8;
+            vram[idx + 2] = (c & 0xff0000) >> 16;
+        }
+    }
+}
+```
+まず，改造前では引数`c`の型が`unsigned char`となっていたのが，改造後は`unsigned`となっているところに気をつけてください．改造前ではこの引数には色のインデックスを代入していましたが，改造後は色のRGBの値を代入します．
+
+次に`for`文中で，ビデオRAMに値を格納しているところに注目してください．まず，格納する番地です．`vmode / 8`を掛けているところに注意してください．これは1つのピクセルを表すのに必要なバイト数です．RGB値はB,G,Rの順番で，分解して格納します．R,G,Bの順番ではないことに注意してください．
+
+このように，24ビットカラーや32ビットカラーを使用する時は，ビデオRAMに値を格納する処理すべてにおいて変更が必要となります．
+
 ## 参考文献
 
 [https://ja.wikipedia.org/wiki/%E8%89%B2%E6%B7%B1%E5%BA%A6:title]
