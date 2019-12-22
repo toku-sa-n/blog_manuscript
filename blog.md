@@ -642,6 +642,10 @@ xp /10xb 0x0ff2
 ## 終わりの言葉
 はりぼてOSを24ビットカラーや32ビットカラーに対応させることができました．また解像度も大きくしたので，そのうち背景画像を設定できるようになるのではと思っています．
 
+[https://github.com/toku-sa-n/ramen:embed:cite]
+
+僕が製作中のOSです．Rustで書かれていますが，もしよければ見ていってください．
+
 ## 参考文献
 
 [https://ja.wikipedia.org/wiki/%E8%89%B2%E6%B7%B1%E5%BA%A6:title]
