@@ -242,7 +242,7 @@ JNE screen_320
 
 この関数で得られた情報の中にはVBEのバージョンも含まれています((表中のVbeVersion))．VBEのバージョンが2.0未満である場合，linear frame bufferを使用することができないので，解像度320x200の8ビットカラーを使用します．
 
-linear framebufferを有効にすると，ビデオRAMのすべてのメモリが一列に並びます．つまり，ディスプレイのどのピクセルもこのビデオRAMのどこかしらに対応しています．linear framebufferに対応していない場合，複数のbankというものに区分けされ，時々bankを切り替える必要があります．
+linear frame bufferを有効にすると，ビデオRAMのすべてのメモリが一列に並びます．つまり，ディスプレイのどのピクセルもこのビデオRAMのどこかしらに対応しています．linear frame bufferに対応していない場合，複数のbankというものに区分けされ，時々bankを切り替える必要があります．
 
 以下のコードは本のP279からの引用です．
 ```asm
@@ -398,8 +398,8 @@ VBEモードの情報は，以下の構造体のような構成となってい�
 |----|------|------------------------|----|
 |Reserved|db|189dub?|remainder of ModeInfoBlock|
 
-##### linear framebufferに対応しているかの確認
-VBEモードがlinear framebufferに対応しているかは，VBEモードの情報の中の`attributes`の第7ビットが1になっているかで確認します．これが1ならlinear framebufferに対応しています．
+##### linear frame bufferに対応しているかの確認
+VBEモードがlinear frame bufferに対応しているかは，VBEモードの情報の中の`attributes`の第7ビットが1になっているかで確認します．これが1ならlinear frame bufferに対応しています．
 
 ```asm
 MOV AX,WORD[ES:DI]
@@ -562,7 +562,7 @@ CMP AX,0x004F
 JE keystatus
 ```
 
-表の通り，`BX`レジスタの第14ビット目は，linear framebufferを使用するか否かについてのビットであり，このビットが1だと使用することを表明します．`OR BX,0x4000`というコードはそのためです．
+表の通り，`BX`レジスタの第14ビット目は，linear frame bufferを使用するか否かについてのビットであり，このビットが1だと使用することを表明します．`OR BX,0x4000`というコードはそのためです．
 
 ##### 320x200を使用する時の処理
 本中のP280のコードを使用していますが，ラベルは`scrn320`から`screen_320`に，`VMODE`は`BPP`に変更しています．
