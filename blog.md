@@ -625,6 +625,20 @@ void boxfill8(struct BootInfo* boot_info, unsigned c, int x0, int y0, int x1, in
 #### 320x200への対応
 関数の失敗や，使用可能なVBEモードが存在しないと言った理由で320x200を使用する場合があります．このような場合，ダイレクトカラーではなくインデックスカラーを使用することになります．従ってRGB値をインデックスに変換するなど，何かしらの処理が必要となります．こちらの説明については長くなってしまうので省略させていただきます．
 
+## トラブルシューティング
+上手く行かない時は，QEMUでメモリの特定の番地の値を確認するといいかもしれません．QEMUでのメモリの値の確認はこちらの「[QEMUでメモリの内容を見る](http://niwatolli3.hatenablog.jp/entry/2015/06/01/201341)」を参考にしました．
+
+ここでは，色数などの情報を確認します．QEMUを使用してOSを起動したあと，`Ctrl+Alt+2`でQEMUのターミナルを開いてください．
+
+起動したあと，以下のコマンドを入力してください．
+
+```
+xp /10xb 0x0ff2
+```
+<figure class="figure-image figure-image-fotolife" title="xp /10xb 0x0ff2を打ったあとの画面（拡大しています）">[f:id:tokuchan3515:20191222140304p:plain:alt=xp /10xb 0x0ff2を打ったあとのQEMUのスクリーンショット]<figcaption>xp /10xb 0x0ff2を打ったあとの画面（拡大しています）</figcaption></figure>
+
+はじめの1バイトは色深度で，この場合は`0x18`すなわち24ビットカラーです．1つ飛ばして次の2バイトは解像度の横の長さで，この場合は`0x0a00`すなわち2560ピクセルです．リトルエンディアンなのではじめのバイトが下位，次のバイトが上位であることに注意してください．その次は解像度の縦の長さで，`0x0640`すなわち1600ピクセルです．表示される色がおかしい場合，はじめの1バイトの値が`0x18`や`0x20`ではないかもしれません．
+
 ## 参考文献
 
 [https://ja.wikipedia.org/wiki/%E8%89%B2%E6%B7%B1%E5%BA%A6:title]
@@ -644,6 +658,3 @@ void boxfill8(struct BootInfo* boot_info, unsigned c, int x0, int y0, int x1, in
 [https://qiita.com/MoriokaReimen/items/4853587dcb9eb96fab62:title]
 
 [http://niwatolli3.hatenablog.jp/entry/2015/06/01/201341:title]
-
-
-
